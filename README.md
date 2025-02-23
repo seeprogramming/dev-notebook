@@ -1,8 +1,13 @@
-# React + Vite
+# **Dev Notebook** - My Personal Dev Journal 📓
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dev Notebook is my space to document everything I learn—whether it's a new JavaScript concept, a tricky React pattern, or backend logic.
 
-Currently, two official plugins are available:
+## Features:
 
--   [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
--   [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   ✔️ **Code Snippets** – Quick examples to reference later
+-   ✔️ **UI Previews** – Capture how things look in the browser
+-   ✔️ **Notes & Insights** – Summarize key takeaways
+-   ✔️ **Organized & Searchable** – So I don’t lose track of anything
+
+Built with **React, Vite, and Tailwind CSS**, keeping it fast and simple.  
+Just a personal dev diary to make learning stick. 🚀
