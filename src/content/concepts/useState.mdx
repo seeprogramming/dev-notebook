@@ -1,0 +1,129 @@
+import { useState } from 'react';
+import UseState from './useState';
+import CodeDemo from '../../components/CodeDemo';
+
+---
+
+title: "Understanding useState Hook"
+date: "2024-02-25"
+tags: ["react", "hooks", "state"]
+
+---
+
+# useState Hook in React
+
+The `useState` hook allows you to add state to your functional components. It's the most basic React hook and enables your components to:
+
+-   Remember values between renders
+-   Trigger re-renders when values change
+-   Maintain component-specific data
+
+## Basic Example
+
+Here's a simple counter that demonstrates how to use the useState hook:
+
+```jsx
+import React, { useState } from 'react';
+
+const UseState = () => {
+    const [count, setCount] = useState(0);
+
+    return (
+        <div className='text-center'>
+            <p className='text-xl mb-2'>Count: {count}</p>
+            <div className='flex justify-center gap-2'>
+                <button
+                    onClick={() => setCount(count - 1)}
+                    className='bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600'
+                >
+                    Decrement
+                </button>
+                <button
+                    onClick={() => setCount(count + 1)}
+                    className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
+                >
+                    Increment
+                </button>
+                <button
+                    onClick={() => setCount(0)}
+                    className='bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600'
+                >
+                    Reset
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default UseState;
+```
+
+## Understanding the Code
+
+Let's break down the key elements:
+
+1. **State Declaration**
+
+```jsx
+const [count, setCount] = useState(0);
+```
+
+-   The first element `count` is the current state value
+-   The second element `setCount` is a function to update the state
+-   The argument to `useState(0)` is the initial state value
+
+## Using State Updater Function
+
+When updating state based on the previous state, it's better to use the functional form:
+
+```jsx
+// Instead of this:
+setCount(count + 1);
+
+// Do this:
+setCount((prevCount) => prevCount + 1);
+```
+
+This prevents issues with stale state in closures.
+
+## Working with Complex State
+
+useState works with any value type, including objects and arrays:
+
+```jsx
+const [user, setUser] = useState({
+    name: 'John',
+    age: 25,
+    email: 'john@example.com',
+});
+
+// Updating an object - make sure to spread the previous values
+const updateEmail = (newEmail) => {
+    setUser((prevUser) => ({
+        ...prevUser,
+        email: newEmail,
+    }));
+};
+```
+
+## Multiple State Variables
+
+You can use useState multiple times in a single component:
+
+```jsx
+const [name, setName] = useState('');
+const [age, setAge] = useState(0);
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+```
+
+## Best Practices
+
+-   Keep state minimal and focused
+-   Split complex state into multiple useState calls
+-   Use the functional update form when updating based on previous state
+-   Consider useReducer for complex state logic
+-   Initialize with a function for expensive calculations: `useState(() => computeExpensiveValue())`
+
+<CodeDemo>
+    <UseState />
+</CodeDemo>

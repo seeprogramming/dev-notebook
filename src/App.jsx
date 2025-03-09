@@ -1,21 +1,28 @@
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
-import { ConceptViewer } from './components/ConceptViewer';
-import UseEffectExample from './content/concepts/useEffect.mdx';
+import DynamicConceptPage from './components/DynamicConceptPage';
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
-    const [count, setCount] = useState(0);
-
     return (
-        <>
-            <Layout>
-                <div className='min-h-screen bg-gray-50'>
-                    <ConceptViewer>
-                        <UseEffectExample />
-                    </ConceptViewer>
-                </div>
-            </Layout>
-        </>
+        <BrowserRouter>
+            <ErrorBoundary>
+                <Layout>
+                    <div className='min-h-screen'>
+                        <Routes>
+                            <Route path='/' element={<Home />} />
+                            <Route
+                                path='/concepts/:slug'
+                                element={<DynamicConceptPage />}
+                            />
+                            <Route path='*' element={<NotFound />} />
+                        </Routes>
+                    </div>
+                </Layout>
+            </ErrorBoundary>
+        </BrowserRouter>
     );
 }
 

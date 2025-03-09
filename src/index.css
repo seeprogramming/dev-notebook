@@ -5,3 +5,43 @@
 body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
+
+@layer utilities {
+    .scrollbar-thin {
+        scrollbar-width: thin;
+    }
+
+    .scrollbar-thumb-gray-300::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+        background-color: #d1d5db;
+        border-radius: 3px;
+    }
+
+    .scrollbar-thumb-gray-300::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+}
+
+.text_gradient {
+    color: #3b82f6;
+    background-image: conic-gradient(from 45deg, #3b82f6 56%, #60a5fa 60%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card_gradient {
+    background: conic-gradient(from 45deg, #3b82f6, #60a5fa);
+}
+
+.card-gradient-hover {
+    @apply transition-all duration-300 rounded-xl shadow-lg;
+    background: #3b82f6; /* Default background */
+}
+
+.card-gradient-hover:hover {
+    background: conic-gradient(from 45deg, #3b82f6, #60a5fa);
+}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import UseEffect from './useEffect';
-// import CodeDemo from '../../components/CodeDemo';
+import CodeDemo from '../../components/CodeDemo';
 
 ---
 
@@ -12,8 +12,16 @@ tags: ["react", "hooks", "effects"]
 
 # useEffect Hook in React
 
-The `useEffect` hook lets you perform side effects in your components.
-Here's a simple example that shows how to use it with a counter.
+The `useEffect` hook lets you perform side effects in your components. Side effects can include:
+
+-   Data fetching
+-   DOM manipulation
+-   Subscriptions
+-   Timer operations
+
+## Basic Example
+
+Here's a simple example that shows how to use it with a counter:
 
 ```jsx
 import React, { useState, useEffect } from 'react';
@@ -44,14 +52,52 @@ const UseEffect = () => {
 export default UseEffect;
 ```
 
-Here's what's happening in the code:
+## Understanding the Code
+
+Let's break down the key elements:
+
+1. **Effect Setup**
+
+```jsx
+useEffect(() => {
+    document.title = `Count is ${count}`;
+}, [count]);
+```
+
+-   The first argument is the effect function
+-   The second argument `[count]` is the dependency array
+-   The effect runs when `count` changes
+
+## Common Use Cases
+
+```jsx
+// Example with cleanup
+useEffect(() => {
+    const subscription = someAPI.subscribe();
+
+    // Cleanup function
+    return () => {
+        subscription.unsubscribe();
+    };
+}, []);
+
+// Example with async operation
+useEffect(() => {
+    async function fetchData() {
+        const response = await api.getData();
+        // Handle response
+    }
+    fetchData();
+}, []);
+```
+
+## Best Practices
+
+-   Always specify dependencies array
+-   Use cleanup function when needed
+-   Avoid infinite loops
+-   Keep effects focused on one responsibility
 
 <CodeDemo>
     <UseEffect />
 </CodeDemo>
-
-Key points:
-
--   useEffect runs after every render
--   The dependency array controls when the effect runs
--   Clean up by returning a function
