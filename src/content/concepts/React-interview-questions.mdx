@@ -1,3 +1,13 @@
+import { useState, useEffect } from 'react';
+
+---
+
+title: "React Interview Questions"
+date: "2025-03-10"
+tags: ["react", "hooks", "effects"]
+
+---
+
 # 50 Essential React Interview Questions and Answers
 
 ## Basic Concepts
@@ -8,12 +18,12 @@ React is a JavaScript library for building user interfaces, particularly single-
 
 ### 2. What are the key features of React?
 
-- **JSX**: A syntax extension that allows mixing HTML with JavaScript
-- **Virtual DOM**: An in-memory representation of the real DOM for performance optimization
-- **Component-Based Architecture**: Encourages building encapsulated components that manage their own state
-- **Unidirectional Data Flow**: Data flows down from parent to child components
-- **React Native**: Ability to create native mobile applications
-- **Declarative UI**: You describe what the UI should look like based on current state
+-   **JSX**: A syntax extension that allows mixing HTML with JavaScript
+-   **Virtual DOM**: An in-memory representation of the real DOM for performance optimization
+-   **Component-Based Architecture**: Encourages building encapsulated components that manage their own state
+-   **Unidirectional Data Flow**: Data flows down from parent to child components
+-   **React Native**: Ability to create native mobile applications
+-   **Declarative UI**: You describe what the UI should look like based on current state
 
 ### 3. What is JSX?
 
@@ -43,12 +53,16 @@ Props (short for properties) are inputs to React components. They are passed fro
 ```jsx
 // Parent component
 function Parent() {
-  return <Child name="John" age={25} />;
+    return <Child name='John' age={25} />;
 }
 
 // Child component
 function Child(props) {
-  return <p>Name: {props.name}, Age: {props.age}</p>;
+    return (
+        <p>
+            Name: {props.name}, Age: {props.age}
+        </p>
+    );
 }
 ```
 
@@ -61,18 +75,20 @@ Props help make components reusable and allow for data to flow through the appli
 React primarily has two types of components:
 
 **Functional Components**:
+
 ```jsx
 function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
+    return <h1>Hello, {props.name}</h1>;
 }
 ```
 
 **Class Components**:
+
 ```jsx
 class Welcome extends React.Component {
-  render() {
-    return <h1>Hello, {this.props.name}</h1>;
-  }
+    render() {
+        return <h1>Hello, {this.props.name}</h1>;
+    }
 }
 ```
 
@@ -84,9 +100,9 @@ Pure Components are a type of component that only re-renders when its props or s
 
 ```jsx
 class MyPureComponent extends React.PureComponent {
-  render() {
-    return <div>{this.props.name}</div>;
-  }
+    render() {
+        return <div>{this.props.name}</div>;
+    }
 }
 ```
 
@@ -97,45 +113,51 @@ For functional components, a similar effect can be achieved with React.memo().
 Class components in React have various lifecycle methods:
 
 **Mounting**:
-- constructor()
-- getDerivedStateFromProps()
-- render()
-- componentDidMount()
+
+-   constructor()
+-   getDerivedStateFromProps()
+-   render()
+-   componentDidMount()
 
 **Updating**:
-- getDerivedStateFromProps()
-- shouldComponentUpdate()
-- render()
-- getSnapshotBeforeUpdate()
-- componentDidUpdate()
+
+-   getDerivedStateFromProps()
+-   shouldComponentUpdate()
+-   render()
+-   getSnapshotBeforeUpdate()
+-   componentDidUpdate()
 
 **Unmounting**:
-- componentWillUnmount()
+
+-   componentWillUnmount()
 
 **Error Handling**:
-- getDerivedStateFromError()
-- componentDidCatch()
+
+-   getDerivedStateFromError()
+-   componentDidCatch()
 
 With Hooks, useEffect() replaces most lifecycle methods in functional components.
 
 ### 9. What are controlled and uncontrolled components?
 
 **Controlled Components**: Form elements whose values are controlled by React state.
+
 ```jsx
 function ControlledInput() {
-  const [value, setValue] = useState('');
-  return <input value={value} onChange={e => setValue(e.target.value)} />;
+    const [value, setValue] = useState('');
+    return <input value={value} onChange={(e) => setValue(e.target.value)} />;
 }
 ```
 
 **Uncontrolled Components**: Form elements that maintain their own internal state.
+
 ```jsx
 function UncontrolledInput() {
-  const inputRef = useRef();
-  const handleSubmit = () => {
-    console.log(inputRef.current.value);
-  };
-  return <input ref={inputRef} />;
+    const inputRef = useRef();
+    const handleSubmit = () => {
+        console.log(inputRef.current.value);
+    };
+    return <input ref={inputRef} />;
 }
 ```
 
@@ -145,10 +167,10 @@ Higher-Order Components are functions that take a component and return a new enh
 
 ```jsx
 function withLogger(WrappedComponent) {
-  return function(props) {
-    console.log('Props:', props);
-    return <WrappedComponent {...props} />;
-  }
+    return function (props) {
+        console.log('Props:', props);
+        return <WrappedComponent {...props} />;
+    };
 }
 
 const EnhancedComponent = withLogger(MyComponent);
@@ -161,13 +183,14 @@ const EnhancedComponent = withLogger(MyComponent);
 Hooks are functions that let you "hook into" React state and lifecycle features from functional components. They were introduced in React 16.8 to allow using state and other React features without writing a class.
 
 Common hooks include:
-- useState
-- useEffect
-- useContext
-- useReducer
-- useCallback
-- useMemo
-- useRef
+
+-   useState
+-   useEffect
+-   useContext
+-   useReducer
+-   useCallback
+-   useMemo
+-   useRef
 
 ### 12. What is useState hook?
 
@@ -175,14 +198,14 @@ useState is a hook that lets you add React state to functional components:
 
 ```jsx
 function Counter() {
-  const [count, setCount] = useState(0);
-  
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-    </div>
-  );
+    const [count, setCount] = useState(0);
+
+    return (
+        <div>
+            <p>Count: {count}</p>
+            <button onClick={() => setCount(count + 1)}>Increment</button>
+        </div>
+    );
 }
 ```
 
@@ -194,24 +217,22 @@ useEffect lets you perform side effects in functional components. It serves the 
 
 ```jsx
 function Example() {
-  const [count, setCount] = useState(0);
+    const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    document.title = `You clicked ${count} times`;
-    // Cleanup function (equivalent to componentWillUnmount)
-    return () => {
-      document.title = 'React App';
-    };
-  }, [count]); // Only re-run when count changes
+    useEffect(() => {
+        document.title = `You clicked ${count} times`;
+        // Cleanup function (equivalent to componentWillUnmount)
+        return () => {
+            document.title = 'React App';
+        };
+    }, [count]); // Only re-run when count changes
 
-  return (
-    <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
-    </div>
-  );
+    return (
+        <div>
+            <p>You clicked {count} times</p>
+            <button onClick={() => setCount(count + 1)}>Click me</button>
+        </div>
+    );
 }
 ```
 
@@ -223,16 +244,20 @@ useContext provides a way to pass data through the component tree without manual
 const ThemeContext = React.createContext('light');
 
 function App() {
-  return (
-    <ThemeContext.Provider value="dark">
-      <ThemedButton />
-    </ThemeContext.Provider>
-  );
+    return (
+        <ThemeContext.Provider value='dark'>
+            <ThemedButton />
+        </ThemeContext.Provider>
+    );
 }
 
 function ThemedButton() {
-  const theme = useContext(ThemeContext);
-  return <button className={theme}>I am styled based on the theme context!</button>;
+    const theme = useContext(ThemeContext);
+    return (
+        <button className={theme}>
+            I am styled based on the theme context!
+        </button>
+    );
 }
 ```
 
@@ -242,32 +267,32 @@ useReducer is an alternative to useState for complex state logic. It accepts a r
 
 ```jsx
 function reducer(state, action) {
-  switch (action.type) {
-    case 'increment':
-      return {count: state.count + 1};
-    case 'decrement':
-      return {count: state.count - 1};
-    default:
-      throw new Error();
-  }
+    switch (action.type) {
+        case 'increment':
+            return { count: state.count + 1 };
+        case 'decrement':
+            return { count: state.count - 1 };
+        default:
+            throw new Error();
+    }
 }
 
 function Counter() {
-  const [state, dispatch] = useReducer(reducer, {count: 0});
-  return (
-    <>
-      Count: {state.count}
-      <button onClick={() => dispatch({type: 'increment'})}>+</button>
-      <button onClick={() => dispatch({type: 'decrement'})}>-</button>
-    </>
-  );
+    const [state, dispatch] = useReducer(reducer, { count: 0 });
+    return (
+        <>
+            Count: {state.count}
+            <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+            <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
+        </>
+    );
 }
 ```
 
 ### 16. What is the difference between useState and useReducer?
 
-- **useState**: Best for simple state values
-- **useReducer**: Better for complex state logic that involves multiple sub-values or when the next state depends on the previous one
+-   **useState**: Best for simple state values
+-   **useReducer**: Better for complex state logic that involves multiple sub-values or when the next state depends on the previous one
 
 ### 17. What are custom hooks?
 
@@ -275,27 +300,28 @@ Custom Hooks are JavaScript functions that start with "use" and may call other H
 
 ```jsx
 function useLocalStorage(key, initialValue) {
-  const [storedValue, setStoredValue] = useState(() => {
-    try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.log(error);
-      return initialValue;
-    }
-  });
+    const [storedValue, setStoredValue] = useState(() => {
+        try {
+            const item = window.localStorage.getItem(key);
+            return item ? JSON.parse(item) : initialValue;
+        } catch (error) {
+            console.log(error);
+            return initialValue;
+        }
+    });
 
-  const setValue = value => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    const setValue = (value) => {
+        try {
+            const valueToStore =
+                value instanceof Function ? value(storedValue) : value;
+            setStoredValue(valueToStore);
+            window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-  return [storedValue, setValue];
+    return [storedValue, setValue];
 }
 ```
 
@@ -313,8 +339,8 @@ React.memo is a higher-order component that memoizes a component, preventing unn
 
 ```jsx
 const MyComponent = React.memo(function MyComponent(props) {
-  // Only re-renders if props change
-  return <div>{props.name}</div>;
+    // Only re-renders if props change
+    return <div>{props.name}</div>;
 });
 ```
 
@@ -324,12 +350,12 @@ useMemo memoizes a computed value, recalculating it only when one of its depende
 
 ```jsx
 function ExpensiveCalculation({ a, b }) {
-  const result = useMemo(() => {
-    // Expensive calculation here
-    return a * b * 1000000;
-  }, [a, b]); // Only recalculate when a or b changes
+    const result = useMemo(() => {
+        // Expensive calculation here
+        return a * b * 1000000;
+    }, [a, b]); // Only recalculate when a or b changes
 
-  return <div>{result}</div>;
+    return <div>{result}</div>;
 }
 ```
 
@@ -339,14 +365,14 @@ useCallback returns a memoized version of a callback function that only changes 
 
 ```jsx
 function ParentComponent() {
-  const [count, setCount] = useState(0);
+    const [count, setCount] = useState(0);
 
-  // This function is memoized and only changes when count changes
-  const handleClick = useCallback(() => {
-    console.log('Button clicked, count:', count);
-  }, [count]);
+    // This function is memoized and only changes when count changes
+    const handleClick = useCallback(() => {
+        console.log('Button clicked, count:', count);
+    }, [count]);
 
-  return <ChildComponent onClick={handleClick} />;
+    return <ChildComponent onClick={handleClick} />;
 }
 ```
 
@@ -377,17 +403,17 @@ const ThemeContext = React.createContext('light');
 
 // Provider in parent component
 function App() {
-  return (
-    <ThemeContext.Provider value="dark">
-      <Toolbar />
-    </ThemeContext.Provider>
-  );
+    return (
+        <ThemeContext.Provider value='dark'>
+            <Toolbar />
+        </ThemeContext.Provider>
+    );
 }
 
 // Consumer in a deeply nested component
 function ThemedButton() {
-  const theme = useContext(ThemeContext);
-  return <button className={theme}>Themed Button</button>;
+    const theme = useContext(ThemeContext);
+    return <button className={theme}>Themed Button</button>;
 }
 ```
 
@@ -399,11 +425,11 @@ React.lazy() allows you to render a dynamic import as a regular component, enabl
 const OtherComponent = React.lazy(() => import('./OtherComponent'));
 
 function MyComponent() {
-  return (
-    <React.Suspense fallback={<div>Loading...</div>}>
-      <OtherComponent />
-    </React.Suspense>
-  );
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <OtherComponent />
+        </React.Suspense>
+    );
 }
 ```
 
@@ -415,25 +441,25 @@ Error Boundaries are components that catch JavaScript errors anywhere in their c
 
 ```jsx
 class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    logErrorToMyService(error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
     }
-    return this.props.children;
-  }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        logErrorToMyService(error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return <h1>Something went wrong.</h1>;
+        }
+        return this.props.children;
+    }
 }
 ```
 
@@ -443,12 +469,10 @@ Portals provide a way to render children into a DOM node that exists outside the
 
 ```jsx
 function Modal() {
-  return ReactDOM.createPortal(
-    <div className="modal">
-      Modal content
-    </div>,
-    document.getElementById('modal-root')
-  );
+    return ReactDOM.createPortal(
+        <div className='modal'>Modal content</div>,
+        document.getElementById('modal-root')
+    );
 }
 ```
 
@@ -460,18 +484,18 @@ Refs provide a way to access DOM nodes or React elements created in the render m
 
 ```jsx
 function MyComponent() {
-  const inputRef = useRef(null);
+    const inputRef = useRef(null);
 
-  const focusInput = () => {
-    inputRef.current.focus();
-  };
+    const focusInput = () => {
+        inputRef.current.focus();
+    };
 
-  return (
-    <>
-      <input ref={inputRef} type="text" />
-      <button onClick={focusInput}>Focus Input</button>
-    </>
-  );
+    return (
+        <>
+            <input ref={inputRef} type='text' />
+            <button onClick={focusInput}>Focus Input</button>
+        </>
+    );
 }
 ```
 
@@ -481,29 +505,32 @@ StrictMode is a tool for highlighting potential problems in an application. It a
 
 ```jsx
 <React.StrictMode>
-  <App />
+    <App />
 </React.StrictMode>
 ```
 
 It helps with:
-- Identifying components with unsafe lifecycles
-- Warning about legacy string ref API usage
-- Detecting unexpected side effects
-- Detecting legacy context API
+
+-   Identifying components with unsafe lifecycles
+-   Warning about legacy string ref API usage
+-   Detecting unexpected side effects
+-   Detecting legacy context API
 
 ### 30. What is the difference between state and props?
 
 **Props**:
-- Passed from parent to child
-- Immutable within the component
-- Used for communication between components
-- Can have default values
+
+-   Passed from parent to child
+-   Immutable within the component
+-   Used for communication between components
+-   Can have default values
 
 **State**:
-- Managed within the component
-- Mutable using setState() or useState hook
-- Used for component's internal data
-- Causes re-renders when updated
+
+-   Managed within the component
+-   Mutable using setState() or useState hook
+-   Used for component's internal data
+-   Causes re-renders when updated
 
 ## State Management
 
@@ -512,10 +539,11 @@ It helps with:
 Redux is a predictable state container for JavaScript apps, commonly used with React. It stores the entire application state in one central location, the "store".
 
 Core concepts:
-- **Store**: Holds the state
-- **Actions**: Describe what happened
-- **Reducers**: How state changes in response to actions
-- **Dispatch**: Method to send actions
+
+-   **Store**: Holds the state
+-   **Actions**: Describe what happened
+-   **Reducers**: How state changes in response to actions
+-   **Dispatch**: Method to send actions
 
 ### 32. What are the three principles of Redux?
 
@@ -528,9 +556,10 @@ Core concepts:
 Middleware provides a third-party extension point between dispatching an action and the moment it reaches the reducer. It's used for logging, crash reporting, asynchronous operations, etc.
 
 Popular middlewares:
-- redux-thunk
-- redux-saga
-- redux-observable
+
+-   redux-thunk
+-   redux-saga
+-   redux-observable
 
 ### 34. What are Redux Thunks?
 
@@ -538,15 +567,15 @@ Redux Thunk is middleware that allows action creators to return a function inste
 
 ```jsx
 function fetchUser(id) {
-  return async (dispatch) => {
-    dispatch({ type: 'USER_FETCH_STARTED' });
-    try {
-      const response = await api.fetchUser(id);
-      dispatch({ type: 'USER_FETCH_SUCCESS', payload: response.data });
-    } catch (error) {
-      dispatch({ type: 'USER_FETCH_ERROR', error });
-    }
-  };
+    return async (dispatch) => {
+        dispatch({ type: 'USER_FETCH_STARTED' });
+        try {
+            const response = await api.fetchUser(id);
+            dispatch({ type: 'USER_FETCH_SUCCESS', payload: response.data });
+        } catch (error) {
+            dispatch({ type: 'USER_FETCH_ERROR', error });
+        }
+    };
 }
 ```
 
@@ -554,45 +583,45 @@ function fetchUser(id) {
 
 Redux Toolkit is the official, opinionated toolset for efficient Redux development. It simplifies Redux by:
 
-- Reducing boilerplate code
-- Providing utilities like createSlice() for simpler reducers and actions
-- Including helpful middlewares by default
-- Enabling use of "mutating" logic in reducers (using Immer)
-- Simplified store setup with configureStore()
+-   Reducing boilerplate code
+-   Providing utilities like createSlice() for simpler reducers and actions
+-   Including helpful middlewares by default
+-   Enabling use of "mutating" logic in reducers (using Immer)
+-   Simplified store setup with configureStore()
 
 ```jsx
 import { createSlice, configureStore } from '@reduxjs/toolkit';
 
 const counterSlice = createSlice({
-  name: 'counter',
-  initialState: { value: 0 },
-  reducers: {
-    increment: state => {
-      state.value += 1; // Looks like mutation but it's safe!
+    name: 'counter',
+    initialState: { value: 0 },
+    reducers: {
+        increment: (state) => {
+            state.value += 1; // Looks like mutation but it's safe!
+        },
+        decrement: (state) => {
+            state.value -= 1;
+        },
     },
-    decrement: state => {
-      state.value -= 1;
-    }
-  }
 });
 
 export const { increment, decrement } = counterSlice.actions;
 
 const store = configureStore({
-  reducer: {
-    counter: counterSlice.reducer
-  }
+    reducer: {
+        counter: counterSlice.reducer,
+    },
 });
 ```
 
 ### 36. What are alternatives to Redux?
 
-- **Context API + useReducer**: For simpler applications
-- **MobX**: State management using observable patterns
-- **Recoil**: Experimental state management library by Facebook
-- **Zustand**: Minimalistic state management
-- **Jotai**: Primitive and flexible state management
-- **XState**: State machines and statecharts
+-   **Context API + useReducer**: For simpler applications
+-   **MobX**: State management using observable patterns
+-   **Recoil**: Experimental state management library by Facebook
+-   **Zustand**: Minimalistic state management
+-   **Jotai**: Primitive and flexible state management
+-   **XState**: State machines and statecharts
 
 ## Testing and Tools
 
@@ -600,10 +629,10 @@ const store = configureStore({
 
 Popular testing libraries for React:
 
-- **Jest**: JavaScript testing framework
-- **React Testing Library**: Testing utilities focused on user behavior
-- **Enzyme**: Testing utility for React component structure
-- **Cypress**: End-to-end testing
+-   **Jest**: JavaScript testing framework
+-   **React Testing Library**: Testing utilities focused on user behavior
+-   **Enzyme**: Testing utility for React component structure
+-   **Cypress**: End-to-end testing
 
 ```jsx
 // Testing with React Testing Library
@@ -611,13 +640,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Counter from './Counter';
 
 test('increments count when button is clicked', () => {
-  render(<Counter />);
-  const button = screen.getByText('Increment');
-  const count = screen.getByText('Count: 0');
-  
-  fireEvent.click(button);
-  
-  expect(screen.getByText('Count: 1')).toBeInTheDocument();
+    render(<Counter />);
+    const button = screen.getByText('Increment');
+    const count = screen.getByText('Count: 0');
+
+    fireEvent.click(button);
+
+    expect(screen.getByText('Count: 1')).toBeInTheDocument();
 });
 ```
 
@@ -630,13 +659,13 @@ import { shallow } from 'enzyme';
 import Counter from './Counter';
 
 describe('Counter', () => {
-  it('increments count when button is clicked', () => {
-    const wrapper = shallow(<Counter />);
-    expect(wrapper.find('.count').text()).toEqual('Count: 0');
-    
-    wrapper.find('button').simulate('click');
-    expect(wrapper.find('.count').text()).toEqual('Count: 1');
-  });
+    it('increments count when button is clicked', () => {
+        const wrapper = shallow(<Counter />);
+        expect(wrapper.find('.count').text()).toEqual('Count: 0');
+
+        wrapper.find('button').simulate('click');
+        expect(wrapper.find('.count').text()).toEqual('Count: 1');
+    });
 });
 ```
 
@@ -644,21 +673,21 @@ describe('Counter', () => {
 
 Jest is a delightful JavaScript testing framework with a focus on simplicity. It works out of the box with React and provides:
 
-- Zero configuration setup
-- Fast, parallelized test runs
-- Snapshot testing
-- Built-in code coverage reports
-- Mocking capabilities
+-   Zero configuration setup
+-   Fast, parallelized test runs
+-   Snapshot testing
+-   Built-in code coverage reports
+-   Mocking capabilities
 
 ### 40. What is React DevTools?
 
 React DevTools is a browser extension that allows you to inspect the React component hierarchy, view component props and state, and debug performance issues. It provides features like:
 
-- Component tree inspection
-- Props and state viewing
-- Profiler for performance analysis
-- Component selection in the browser
-- Tracking of component renders
+-   Component tree inspection
+-   Props and state viewing
+-   Profiler for performance analysis
+-   Component selection in the browser
+-   Tracking of component renders
 
 ## Routing and Data Fetching
 
@@ -670,57 +699,61 @@ React Router is a collection of navigational components that compose declarative
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <nav>
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-      </nav>
-      
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/users/:userId" element={<UserProfile />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            <nav>
+                <Link to='/'>Home</Link>
+                <Link to='/about'>About</Link>
+            </nav>
+
+            <Routes>
+                <Route path='/' element={<Home />} />
+                <Route path='/about' element={<About />} />
+                <Route path='/users/:userId' element={<UserProfile />} />
+                <Route path='*' element={<NotFound />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 ```
 
 ### 42. What are the main components of React Router?
 
-- **BrowserRouter**: Uses HTML5 history API for clean URLs
-- **Routes**: Renders the first Route that matches the location
-- **Route**: Declares an element that should be rendered at a certain path
-- **Link**: Creates a link to a specific route
-- **Navigate**: Programmatic navigation
-- **useParams/useNavigate/useLocation**: Hooks for accessing router information
+-   **BrowserRouter**: Uses HTML5 history API for clean URLs
+-   **Routes**: Renders the first Route that matches the location
+-   **Route**: Declares an element that should be rendered at a certain path
+-   **Link**: Creates a link to a specific route
+-   **Navigate**: Programmatic navigation
+-   **useParams/useNavigate/useLocation**: Hooks for accessing router information
 
 ### 43. What are ways to fetch data in React?
 
 1. **Fetch API**:
+
 ```jsx
 useEffect(() => {
-  const fetchData = async () => {
-    const response = await fetch('https://api.example.com/data');
-    const data = await response.json();
-    setState(data);
-  };
-  fetchData();
+    const fetchData = async () => {
+        const response = await fetch('https://api.example.com/data');
+        const data = await response.json();
+        setState(data);
+    };
+    fetchData();
 }, []);
 ```
 
 2. **Axios**:
+
 ```jsx
 useEffect(() => {
-  axios.get('https://api.example.com/data')
-    .then(response => setState(response.data))
-    .catch(error => console.error(error));
+    axios
+        .get('https://api.example.com/data')
+        .then((response) => setState(response.data))
+        .catch((error) => console.error(error));
 }, []);
 ```
 
 3. **React Query/SWR** (modern data fetching libraries):
+
 ```jsx
 // Using React Query
 const { data, isLoading, error } = useQuery('todos', fetchTodos);
@@ -737,11 +770,11 @@ SWR (stale-while-revalidate) is a React Hooks library for data fetching. It hand
 import useSWR from 'swr';
 
 function Profile() {
-  const { data, error } = useSWR('/api/user', fetcher);
+    const { data, error } = useSWR('/api/user', fetcher);
 
-  if (error) return <div>Failed to load</div>;
-  if (!data) return <div>Loading...</div>;
-  return <div>Hello {data.name}!</div>;
+    if (error) return <div>Failed to load</div>;
+    if (!data) return <div>Loading...</div>;
+    return <div>Hello {data.name}!</div>;
 }
 ```
 
@@ -750,36 +783,47 @@ function Profile() {
 React Query is a data-fetching and state management library that provides hooks for fetching, caching, and updating asynchronous data:
 
 ```jsx
-import { useQuery, useMutation, QueryClient, QueryClientProvider } from 'react-query';
+import {
+    useQuery,
+    useMutation,
+    QueryClient,
+    QueryClientProvider,
+} from 'react-query';
 
 const queryClient = new QueryClient();
 
 function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TodoList />
-    </QueryClientProvider>
-  );
+    return (
+        <QueryClientProvider client={queryClient}>
+            <TodoList />
+        </QueryClientProvider>
+    );
 }
 
 function TodoList() {
-  const { data, isLoading } = useQuery('todos', fetchTodos);
-  const mutation = useMutation(newTodo => {
-    return axios.post('/api/todos', newTodo);
-  });
+    const { data, isLoading } = useQuery('todos', fetchTodos);
+    const mutation = useMutation((newTodo) => {
+        return axios.post('/api/todos', newTodo);
+    });
 
-  if (isLoading) return <div>Loading...</div>;
-  
-  return (
-    <>
-      <ul>
-        {data.map(todo => <li key={todo.id}>{todo.title}</li>)}
-      </ul>
-      <button onClick={() => {
-        mutation.mutate({ title: 'New Todo' });
-      }}>Add Todo</button>
-    </>
-  );
+    if (isLoading) return <div>Loading...</div>;
+
+    return (
+        <>
+            <ul>
+                {data.map((todo) => (
+                    <li key={todo.id}>{todo.title}</li>
+                ))}
+            </ul>
+            <button
+                onClick={() => {
+                    mutation.mutate({ title: 'New Todo' });
+                }}
+            >
+                Add Todo
+            </button>
+        </>
+    );
 }
 ```
 
@@ -789,11 +833,11 @@ function TodoList() {
 
 React Server Components allow components to be rendered on the server and streamed to the client, providing several benefits:
 
-- Zero bundle size for server components
-- Direct access to server resources
-- Automatic code splitting
-- No client-server waterfalls
-- Improved initial load performance
+-   Zero bundle size for server components
+-   Direct access to server resources
+-   Automatic code splitting
+-   No client-server waterfalls
+-   Improved initial load performance
 
 They work alongside client components in a unified architecture.
 
@@ -801,10 +845,10 @@ They work alongside client components in a unified architecture.
 
 Concurrent Mode (now referred to as concurrent features) lets React work on multiple tasks simultaneously, pausing and resuming work to help keep the UI responsive:
 
-- Non-blocking rendering
-- Prioritizing updates based on importance
-- Suspense for data fetching
-- useTransition hook for smoother transitions
+-   Non-blocking rendering
+-   Prioritizing updates based on importance
+-   Suspense for data fetching
+-   useTransition hook for smoother transitions
 
 ### 48. What is the Compound Component pattern?
 
@@ -812,43 +856,43 @@ Compound Components is a pattern where components are used together to form a mo
 
 ```jsx
 function Tabs() {
-  const [activeTab, setActiveTab] = useState(0);
-  
-  return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
-      {props.children}
-    </TabsContext.Provider>
-  );
+    const [activeTab, setActiveTab] = useState(0);
+
+    return (
+        <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+            {props.children}
+        </TabsContext.Provider>
+    );
 }
 
 Tabs.Panel = function Panel(props) {
-  const { activeTab } = useContext(TabsContext);
-  return activeTab === props.index ? props.children : null;
+    const { activeTab } = useContext(TabsContext);
+    return activeTab === props.index ? props.children : null;
 };
 
 Tabs.Tab = function Tab(props) {
-  const { activeTab, setActiveTab } = useContext(TabsContext);
-  return (
-    <button 
-      className={activeTab === props.index ? 'active' : ''}
-      onClick={() => setActiveTab(props.index)}
-    >
-      {props.children}
-    </button>
-  );
+    const { activeTab, setActiveTab } = useContext(TabsContext);
+    return (
+        <button
+            className={activeTab === props.index ? 'active' : ''}
+            onClick={() => setActiveTab(props.index)}
+        >
+            {props.children}
+        </button>
+    );
 };
 
 // Usage
 <Tabs>
-  <div className="tabs-list">
-    <Tabs.Tab index={0}>Tab 1</Tabs.Tab>
-    <Tabs.Tab index={1}>Tab 2</Tabs.Tab>
-  </div>
-  <div className="panels">
-    <Tabs.Panel index={0}>Content 1</Tabs.Panel>
-    <Tabs.Panel index={1}>Content 2</Tabs.Panel>
-  </div>
-</Tabs>
+    <div className='tabs-list'>
+        <Tabs.Tab index={0}>Tab 1</Tabs.Tab>
+        <Tabs.Tab index={1}>Tab 2</Tabs.Tab>
+    </div>
+    <div className='panels'>
+        <Tabs.Panel index={0}>Content 1</Tabs.Panel>
+        <Tabs.Panel index={1}>Content 2</Tabs.Panel>
+    </div>
+</Tabs>;
 ```
 
 ### 49. What is the Render Props pattern?
@@ -857,28 +901,30 @@ Render Props is a pattern where a component receives a function as a prop that r
 
 ```jsx
 function MouseTracker({ render }) {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  
-  useEffect(() => {
-    const handleMouseMove = (event) => {
-      setPosition({ x: event.clientX, y: event.clientY });
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, []);
-  
-  return render(position);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+
+    useEffect(() => {
+        const handleMouseMove = (event) => {
+            setPosition({ x: event.clientX, y: event.clientY });
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, []);
+
+    return render(position);
 }
 
 // Usage
-<MouseTracker 
-  render={({ x, y }) => (
-    <div>Mouse position: {x}, {y}</div>
-  )}
-/>
+<MouseTracker
+    render={({ x, y }) => (
+        <div>
+            Mouse position: {x}, {y}
+        </div>
+    )}
+/>;
 ```
 
 ### 50. What are React Design Patterns you should know?

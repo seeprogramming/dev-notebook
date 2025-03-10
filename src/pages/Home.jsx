@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { FaSearch } from 'react-icons/fa';
-import { SearchX } from 'lucide-react';
+import { SearchX, ArrowRight } from 'lucide-react';
 
 // Home component: Displays the homepage with a list of featured concepts and a search bar
 const Home = () => {
@@ -90,14 +90,18 @@ const Home = () => {
                         <Link
                             key={concept.slug}
                             to={`/concepts/${concept.slug}`}
-                            className='card_gradient text-white  block p-6 rounded-md shadow transform transition-transform hover:scale-105'
+                            className='card_gradient text-white block p-6 rounded-md shadow transform transition-transform hover:scale-105 flex justify-between items-center'
                         >
-                            <h3 className='text-xl font-semibold mb-2'>
-                                {concept.title}
-                            </h3>
-                            <p className='text-sm'>
-                                Click to read more about {concept.title}.
-                            </p>
+                            <div className=''>
+                                <h3 className='text-md font-semibold mb-2'>
+                                    {concept.title}
+                                </h3>
+                            </div>
+                            <ArrowRight
+                                className='text-2xl text-white'
+                                width='24'
+                                height='24'
+                            />
                         </Link>
                     ))
                 ) : (

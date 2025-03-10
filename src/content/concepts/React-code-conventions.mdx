@@ -1,0 +1,205 @@
+---
+title: 'React Code Conventions & Best Practices'
+date: '2025-03-10'
+tags: ['react', 'best practices', 'production']
+---
+
+# React Code Conventions & Best Practices
+
+Writing clean, maintainable, and scalable React applications requires following industry-standard conventions and best practices. This guide covers key guidelines to improve code quality and maintainability in production.
+
+## 1. Folder Structure
+
+A well-structured project improves readability and maintainability.
+
+```
+my-app/
+│-- src/
+│   │-- components/      # Reusable UI components
+│   │-- hooks/           # Custom hooks
+│   │-- pages/           # Page-level components
+│   │-- services/        # API calls and business logic
+│   │-- utils/           # Helper functions
+│   │-- context/         # React context providers
+│   │-- assets/          # Images, icons, styles
+│   │-- App.jsx          # Root component
+│   │-- main.jsx         # Entry point
+```
+
+## 2. Component Naming & Organization
+
+-   Use **PascalCase** for component names (`MyComponent.jsx`)
+-   Keep each component in a separate file
+-   Place reusable components inside `components/`
+-   Keep business logic separate from UI rendering
+
+```jsx
+// ✅ Good: Separate concerns
+function Button({ label, onClick }) {
+    return <button onClick={onClick}>{label}</button>;
+}
+```
+
+```jsx
+// ❌ Bad: Inline logic inside JSX
+function Button({ label }) {
+    return <button onClick={() => console.log('Clicked')}>{label}</button>;
+}
+```
+
+## 3. Hooks Best Practices
+
+-   **Keep effects clean**: Always return a cleanup function when needed.
+-   **Use dependency arrays** to avoid unnecessary renders.
+-   **Abstract logic** into custom hooks for reusability.
+
+```jsx
+// ✅ Good: Using a custom hook for fetching data
+import { useState, useEffect } from 'react';
+
+function useFetch(url) {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        async function fetchData() {
+            const response = await fetch(url);
+            const result = await response.json();
+            setData(result);
+        }
+        fetchData();
+    }, [url]);
+
+    return data;
+}
+```
+
+## 4. State Management
+
+-   **Local State**: Use `useState` or `useReducer` for small-scale state.
+-   **Global State**: Use **Context API** for lightweight global state or **Redux** for complex state.
+
+```jsx
+// ✅ Using Context API for global state
+import { createContext, useContext, useState } from 'react';
+
+const ThemeContext = createContext();
+
+export function ThemeProvider({ children }) {
+    const [theme, setTheme] = useState('light');
+    return (
+        <ThemeContext.Provider value={{ theme, setTheme }}>
+            {children}
+        </ThemeContext.Provider>
+    );
+}
+
+export function useTheme() {
+    return useContext(ThemeContext);
+}
+```
+
+## 5. Performance Optimization
+
+### Use `useMemo` & `useCallback`
+
+-   **`useMemo`**: Memoize expensive calculations.
+-   **`useCallback`**: Memoize functions to prevent unnecessary re-renders.
+
+```jsx
+import { useMemo, useCallback, useState } from 'react';
+
+function ExpensiveComponent({ items }) {
+    const sortedItems = useMemo(() => items.sort(), [items]);
+    const handleClick = useCallback(() => console.log('Clicked!'), []);
+
+    return (
+        <div>
+            {sortedItems.map((item) => (
+                <p key={item}>{item}</p>
+            ))}
+            <button onClick={handleClick}>Click</button>
+        </div>
+    );
+}
+```
+
+### Lazy Loading with `React.lazy()`
+
+Load components dynamically to improve performance.
+
+```jsx
+import { lazy, Suspense } from 'react';
+
+const HeavyComponent = lazy(() => import('./HeavyComponent'));
+
+function App() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <HeavyComponent />
+        </Suspense>
+    );
+}
+```
+
+## 6. API Handling & Error Management
+
+-   Use `try/catch` for error handling.
+-   Use **Axios** or `fetch` with async/await.
+-   Implement proper **loading** and **error states**.
+
+```jsx
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+function FetchData() {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await axios.get('/api/data');
+                setData(response.data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchData();
+    }, []);
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
+
+    return <pre>{JSON.stringify(data, null, 2)}</pre>;
+}
+```
+
+## 7. Security Best Practices
+
+-   **Never store sensitive data in local storage**
+-   **Sanitize user inputs** to prevent XSS attacks
+-   **Use HTTPS** and secure cookies
+-   **Limit API exposure** and use authentication
+
+```js
+// ❌ Bad: Storing sensitive info in localStorage
+localStorage.setItem('token', 'my-secret-token');
+```
+
+```js
+// ✅ Good: Use HttpOnly cookies for tokens
+```
+
+## 8. Deployment & CI/CD
+
+-   **Use `.env` for environment variables**
+-   **Enable tree shaking** for smaller bundle size
+-   **Use ESLint & Prettier** for consistent formatting
+-   **Set up CI/CD** (GitHub Actions, Vercel, Netlify, etc.)
+
+## Conclusion
+
+Following these conventions and best practices ensures scalable, maintainable, and performant React applications. 🚀

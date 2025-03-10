@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, X, ArrowUpCircle } from 'lucide-react';
+import { Menu, X, ArrowUpCircle, ArrowLeftCircle } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import ConceptsList from './ConceptsList';
 import Footer from './Footer';
@@ -72,10 +72,18 @@ const Layout = ({ children }) => {
                         h-[calc(100vh)]
                     `}
                 >
-                    <div className='h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300'>
-                        <nav className='p-4'>
-                            <ConceptsList />
-                        </nav>
+                    <div className='h-[96vh]  md:h-[92vh] flex flex-col justify-between'>
+                        <div className='overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 flex-1'>
+                            <nav className='p-4'>
+                                <ConceptsList />
+                            </nav>
+                        </div>
+                        {/* Footer */}
+                        <div className='bg-gray-800 p-2  rounded flex justify-center'>
+                            <p className=' text_gradient'>
+                                Created by Sagar Shelke
+                            </p>
+                        </div>
                     </div>
                 </aside>
 
@@ -95,9 +103,10 @@ const Layout = ({ children }) => {
                         {location.pathname.startsWith('/concepts/') && (
                             <button
                                 onClick={() => navigate(-1)}
-                                className='card_gradient mb-4 px-2 py-1 bg-gradient-to-r from-primary to-secondary text-white rounded hover:from-secondary hover:to-primary transition-colors duration-200'
+                                className='card_gradient  mb-4 px-2 py-1 bg-gradient-to-r from-primary to-secondary text-white rounded hover:from-secondary hover:to-primary transition-colors duration-200 flex gap-1'
+                                title='Go Back'
                             >
-                                Go Back
+                                <ArrowLeftCircle /> Go Back
                             </button>
                         )}
                         {/* Render children components */}
