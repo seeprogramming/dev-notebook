@@ -1,0 +1,217 @@
+# Secure SFTP File Browser Backend
+
+This code implements a secure file browser backend that allows authenticated users to browse files on an SFTP server. The application handles authentication, key generation, and SFTP connections in a secure manner.
+
+```javascript
+const express = require('express');
+const { expressjwt: jwt } = require('express-jwt');
+const jwks = require('jwks-rsa');
+const { generateKeyPairSync } = require('crypto');
+const sshpk = require('sshpk');
+const Client = require('ssh2-sftp-client');
+```
+
+**Explanation:**
+- `express`: Web framework for creating the HTTP server
+- `express-jwt`: Middleware for validating JWTs (JSON Web Tokens)
+- `jwks-rsa`: Library to retrieve RSA public keys from a JWKS (JSON Web Key Set) endpoint
+- `crypto`: Node.js built-in module for cryptographic operations
+- `sshpk`: Library for working with SSH keys in various formats
+- `ssh2-sftp-client`: SFTP client library for Node.js
+
+```javascript
+const app = express();
+app.use(express.json());
+
+// In-memory store for user sessions
+const userSessions = new Map();
+```
+
+**Explanation:**
+- Initialize the Express application
+- Add middleware to parse JSON request bodies
+- Create an in-memory store using JavaScript's Map to keep track of user sessions and their generated SSH keys
+
+```javascript
+// JWT Validation Middleware
+const jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksUri: process.env.KEYCLOAK_JWKS_URI
+  }),
+  audience: process.env.KEYCLOAK_CLIENT_ID,
+  issuer: process.env.KEYCLOAK_ISSUER,
+  algorithms: ['RS256']
+});
+```
+
+**Explanation:**
+- JWT validation middleware configures token verification
+- Uses `jwks-rsa` to fetch the public keys from Keycloak's JWKS endpoint
+- Validates the token's audience and issuer match the expected values
+- Only accepts tokens signed with the RS256 algorithm
+- This middleware only validates user authentication with the application and doesn't handle SFTP authentication
+
+```javascript
+// Automatic Key Generation Middleware
+const generateUserKeys = async (req, res, next) => {
+  try {
+    const userKey = `user-${req.auth.sub}`;
+    
+    if (!userSessions.has(userKey)) {
+      // Generate new key pair
+      const { publicKey, privateKey } = generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: {
+          type: 'spki',
+          format: 'pem'
+        },
+        privateKeyEncoding: {
+          type: 'pkcs8',
+          format: 'pem'
+        }
+      });
+
+      // Convert to OpenSSH format
+      const opensshPublicKey = sshpk.parseKey(publicKey, 'pem').toString('ssh');
+
+      // Store in memory (consider Redis for production)
+      userSessions.set(userKey, {
+        publicKey: opensshPublicKey,
+        privateKey,
+        timestamp: Date.now()
+      });
+    }
+
+    req.userKeys = userSessions.get(userKey);
+    next();
+  } catch (error) {
+    res.status(500).json({ error: 'Key generation failed' });
+  }
+};
+```
+
+**Explanation:**
+- Middleware to generate RSA key pairs for SFTP authentication
+- Creates a unique key for each user based on their subject ID from the JWT
+- Checks if the user already has a key pair stored in the session map
+- If not, generates a new 2048-bit RSA key pair
+- Converts the public key to OpenSSH format for compatibility with SFTP servers
+- Stores both keys in memory along with a timestamp for session expiry management
+- Attaches the keys to the request object for use in subsequent middleware
+- Returns a 500 error if key generation fails
+
+```javascript
+// SFTP Connection Middleware
+const sftpConnection = async (req, res, next) => {
+  const sftp = new Client();
+  
+  try {
+    await sftp.connect({
+      host: process.env.SFTP_HOST,
+      port: process.env.SFTP_PORT || 22,
+      username: req.auth.preferred_username,
+      privateKey: req.userKeys.privateKey
+    });
+
+    req.sftpClient = sftp;
+    next();
+  } catch (error) {
+    await sftp.end();
+    res.status(500).json({ error: 'SFTP connection failed' });
+  }
+};
+```
+
+**Explanation:**
+- Middleware to establish an SFTP connection
+- Creates a new SFTP client
+- Attempts to connect to the SFTP server using:
+  - Host and port from environment variables
+  - Username from the JWT (preferred_username claim)
+  - Private key generated in the previous middleware
+- Attaches the SFTP client to the request object for use in route handlers
+- Properly closes the connection and returns a 500 error if connection fails
+
+```javascript
+// File Browser Endpoint
+app.get(
+  '/file-browser',
+  jwtCheck,
+  generateUserKeys,
+  sftpConnection,
+  async (req, res) => {
+    try {
+      const path = req.query.path || '/';
+      const fileList = await req.sftpClient.list(path);
+      
+      res.json({
+        path,
+        files: fileList.map(file => ({
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          modifyTime: file.modifyTime
+        }))
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'File listing failed' });
+    } finally {
+      await req.sftpClient.end();
+    }
+  }
+);
+```
+
+**Explanation:**
+- Defines a GET endpoint at `/file-browser` for browsing files on the SFTP server
+- Uses a chain of middleware:
+  1. `jwtCheck`: Validates the user's JWT
+  2. `generateUserKeys`: Ensures the user has an SSH key pair
+  3. `sftpConnection`: Establishes an SFTP connection
+- Takes an optional `path` query parameter (defaults to root '/')
+- Lists files at the specified path using the SFTP client
+- Returns a JSON response with the current path and file information
+- Properly handles errors and ensures the SFTP connection is closed with `finally`
+
+```javascript
+// Cleanup old sessions
+setInterval(() => {
+  const now = Date.now();
+  userSessions.forEach((value, key) => {
+    if (now - value.timestamp > 15 * 60 * 1000) { // 15 minutes
+      userSessions.delete(key);
+    }
+  });
+}, 60 * 1000);
+```
+
+**Explanation:**
+- Sets up a periodic task to clean up old user sessions
+- Runs every minute (60 * 1000 milliseconds)
+- Checks each session's timestamp against the current time
+- Removes sessions that are older than 15 minutes to manage memory usage
+- This prevents the in-memory store from growing indefinitely
+
+```javascript
+app.listen(3001, () => console.log('Backend running on port 3001'));
+```
+
+**Explanation:**
+- Starts the Express server on port 3001
+- Logs a message when the server is running
+
+## Security Considerations
+
+1. **JWT Authentication**: Uses industry-standard JWT validation for API security
+2. **Dynamic Key Generation**: Generates unique SSH keys for each user session
+3. **Key Rotation**: Keys expire after 15 minutes of inactivity
+4. **Memory Management**: Automatically cleans up expired sessions
+5. **Error Handling**: Properly handles errors and closes SFTP connections
+
+For production deployment, consider:
+- Using Redis or another persistent store instead of in-memory storage for user sessions
+- Adding rate limiting to prevent abuse
+- Implementing more detailed logging for security audits
+- Setting up proper key rotation policies
